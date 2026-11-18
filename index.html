@@ -239,7 +239,7 @@ details.photos summary { cursor: pointer; font-size: 13px; color: var(--orchid);
 .photo-row .face { width: 40px; height: 40px; font-size: 16px; }
 .photo-row label.btn, .photo-row button { padding: 6px 10px; font-size: 12px; }
 .photo-row input[type=file] { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.confirm-reset { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; color: var(--silver-dim); }
+.confirm-reset { display: grid; gap: 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; font-size: 13px; color: var(--silver); }
 
 /* ---------- export overlay ---------- */
 .overlay {
@@ -439,7 +439,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .t-btn.t-quiet { color: var(--t-ink); }
 .t-btn.t-danger { background: #c4483a; color: #ffffff; border-color: #c4483a; font-weight: 700; }
 .t-btn[aria-pressed="true"] { border-color: var(--t-focus); color: var(--t-focus); }
-.t-confirm-reset { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; color: var(--t-ink-dim); }
+.t-confirm-reset { display: grid; gap: 10px; padding: 12px 14px; border: 1px solid var(--t-line); border-radius: 8px; font-size: 13px; color: var(--t-ink); }
 
 .t-overlay {
   position: fixed;
@@ -468,6 +468,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
   --navy: #121c33; --navy-deep: #0b1324; --silver: #c9cfd9; --silver-dim: #7f899b;
   --orchid: #f2ede3; --line: rgba(201, 207, 217, .22); --focus: #e8d9a8;
 }
+.overlay { color: var(--silver); }
+.overlay .btn, .t-overlay .t-btn { color: inherit; }
+.overlay .btn.primary { color: var(--navy-deep); }
+.t-overlay .t-btn.t-primary { color: var(--t-on-ink); }
 :root[data-ui="light"] #tierMode { --t-ink: #1f2430; --t-ink-dim: #687083; --t-line: rgba(0, 0, 0, .36); --t-focus: #b9832a; --t-on-ink: #ffffff; }
 .t-board, .t-overlay { --t-ink: #ececec; --t-ink-dim: #9a9a9a; --t-line: rgba(255, 255, 255, .14); --t-focus: #ffd56b; --t-on-ink: #111111; color: var(--t-ink); }
 .modes { align-items: center; }
@@ -482,6 +486,12 @@ button { font: inherit; color: inherit; cursor: pointer; }
   padding: 0;
 }
 .ui-toggle svg { width: 18px; height: 18px; }
+/* top action bar: one even row, never wraps into odd leftovers */
+.bar { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 8px; }
+.bar > button { padding: 10px 6px; white-space: nowrap; text-align: center; }
+.confirm-reset p, .t-confirm-reset p { margin: 0; line-height: 1.5; }
+.confirm-btns { display: flex; justify-content: flex-end; gap: 8px; }
+.confirm-btns > button { min-width: 84px; }
 
 @media (prefers-reduced-motion: no-preference) {
   .face { transition: box-shadow .15s ease, border-color .15s ease; }
@@ -501,15 +511,17 @@ button { font: inherit; color: inherit; cursor: pointer; }
     <div class="pick-row" id="designRow"><span>디자인</span></div>
     <div class="pick-row" id="colorRow"><span>배경색</span></div>
   </section>
-  <div class="actions">
-    <button class="btn primary" id="saveBtn" type="button">이미지로 저장</button>
-    <button class="btn quiet" id="clearBtn" type="button">배치만 비우기</button>
-    <button class="btn danger" id="resetBtn" type="button">전부 초기화</button>
+  <div class="actions bar">
+    <button class="btn primary" id="saveBtn" type="button">이미지 저장</button>
+    <button class="btn quiet" id="clearBtn" type="button">비우기</button>
+    <button class="btn danger" id="resetBtn" type="button">초기화</button>
   </div>
   <div class="confirm-reset" id="confirmReset" hidden>
-    <span>주제, 배치, 코멘트, 사진을 모두 지워요.</span>
-    <button class="btn danger" id="resetYes" type="button">지우기</button>
-    <button class="btn quiet" id="resetNo" type="button">취소</button>
+    <p>주제, 배치, 코멘트, 사진을 모두 지울까요?</p>
+    <div class="confirm-btns">
+      <button class="btn quiet" id="resetNo" type="button">취소</button>
+      <button class="btn danger" id="resetYes" type="button">지우기</button>
+    </div>
   </div>
   <section class="board" id="board" aria-label="순위표">
     <div class="spine" aria-hidden="true">聖蘭学園</div>
@@ -539,16 +551,18 @@ button { font: inherit; color: inherit; cursor: pointer; }
   </div>
 
 <div class="t-wrap" id="tierMode" hidden>
-  <div class="t-actions">
-    <button class="t-btn t-primary" id="t-saveBtn" type="button">이미지로 저장</button>
+  <div class="t-actions bar">
+    <button class="t-btn t-primary" id="t-saveBtn" type="button">이미지 저장</button>
     <button class="t-btn" id="t-editBtn" type="button" aria-pressed="false">줄 편집</button>
-    <button class="t-btn t-quiet" id="t-clearBtn" type="button">배치만 비우기</button>
-    <button class="t-btn t-danger" id="t-resetBtn" type="button">전부 초기화</button>
+    <button class="t-btn t-quiet" id="t-clearBtn" type="button">비우기</button>
+    <button class="t-btn t-danger" id="t-resetBtn" type="button">초기화</button>
   </div>
   <div class="t-confirm-reset" id="t-confirmReset" hidden>
-    <span>제목, 줄 이름과 색, 배치를 처음 상태로 되돌려요.</span>
-    <button class="t-btn t-danger" id="t-resetYes" type="button">되돌리기</button>
-    <button class="t-btn t-quiet" id="t-resetNo" type="button">취소</button>
+    <p>제목, 줄 이름과 색, 배치를 처음 상태로 되돌릴까요?</p>
+    <div class="confirm-btns">
+      <button class="t-btn t-quiet" id="t-resetNo" type="button">취소</button>
+      <button class="t-btn t-danger" id="t-resetYes" type="button">되돌리기</button>
+    </div>
   </div>
   <section class="t-board" id="t-board" aria-label="티어표">
     <div class="t-title" id="t-title" contenteditable="true" spellcheck="false" aria-label="제목"></div>
@@ -591,7 +605,7 @@ function fileName(t, fb) { t = (t || '').replace(/[\\/:*?"<>|\n\r]+/g, ' ').repl
 (function () {
   var CHARS = [
     { id: 'yuma',   kr: '오토리 유마',       jp: '鳳 悠真',   glyph: '鳳', color: '#a8873a' },
-    { id: 'naoto',  kr: '키노시타 나오토',   jp: '木下 直人', glyph: '木', color: '#6f747d' },
+    { id: 'naoto',  kr: '키노시타 나오토',   jp: '木下 直人', glyph: '木', color: '#6e5a9e' },
     { id: 'shu',    kr: '시노미야 슈',       jp: '篠宮 修',   glyph: '篠', color: '#3f7458' },
     { id: 'kaoru',  kr: '하나다 카오루',     jp: '縹 薫',     glyph: '縹', color: '#456f96' },
     { id: 'nui',    kr: '이누카이 누이',     jp: '犬飼 縫',   glyph: '犬', color: '#8e5b31' },
@@ -788,7 +802,7 @@ function fileName(t, fb) { t = (t || '').replace(/[\\/:*?"<>|\n\r]+/g, ' ').repl
   ];
   var PALETTES = [
     { id: 'yuma',   name: '유마',   bg: '#fdf3d0', card: 'rgba(255,255,255,.72)', ink: '#5a4a2a', accent: '#c9962f', soft: '#d9c189' },
-    { id: 'naoto',  name: '나오토', bg: '#f3e8ee', card: 'rgba(255,255,255,.72)', ink: '#4f4650', accent: '#c46a95', soft: '#cdb3c2' },
+    { id: 'naoto',  name: '나오토', bg: '#ece6f7', card: 'rgba(255,255,255,.72)', ink: '#463f5c', accent: '#7d63b8', soft: '#bfb2dd' },
     { id: 'shu',    name: '슈',     bg: '#e2f3e6', card: 'rgba(255,255,255,.72)', ink: '#36503f', accent: '#4c9467', soft: '#a9cdb4' },
     { id: 'kaoru',  name: '카오루', bg: '#e3f0fb', card: 'rgba(255,255,255,.75)', ink: '#3b4c63', accent: '#4f8fd0', soft: '#a9c6e3' },
     { id: 'nui',    name: '누이',   bg: '#fde9d6', card: 'rgba(255,255,255,.72)', ink: '#5b4330', accent: '#e08a3c', soft: '#e3bb93' },
@@ -920,7 +934,7 @@ function fileName(t, fb) { t = (t || '').replace(/[\\/:*?"<>|\n\r]+/g, ' ').repl
     }).then(function () {
       board.classList.remove('exporting');
       btn.disabled = false;
-      btn.textContent = '이미지로 저장';
+      btn.textContent = '이미지 저장';
     });
   });
   $('closeShot').addEventListener('click', function () { $('overlay').hidden = true; });
@@ -931,7 +945,7 @@ function fileName(t, fb) { t = (t || '').replace(/[\\/:*?"<>|\n\r]+/g, ' ').repl
 <script>
 (function () {
   var HEADS = window.SEIRAN_HEADS || {};
-  var TINT = { yuma: '#fdf3d0', naoto: '#f3e8ee', shu: '#e2f3e6', kaoru: '#e3f0fb', nui: '#fde9d6', megumu: '#fbe1e5' };
+  var TINT = { yuma: '#fdf3d0', naoto: '#ece6f7', shu: '#e2f3e6', kaoru: '#e3f0fb', nui: '#fde9d6', megumu: '#fbe1e5' };
   var CHARS = window.SEIRAN_CHARS || [];
   var BY_ID = {};
   CHARS.forEach(function (c) { BY_ID[c.id] = c; });
@@ -1118,7 +1132,7 @@ function fileName(t, fb) { t = (t || '').replace(/[\\/:*?"<>|\n\r]+/g, ' ').repl
     var on = !$('t-board').classList.contains('t-editing');
     $('t-board').classList.toggle('t-editing', on);
     $('t-editBtn').setAttribute('aria-pressed', on ? 'true' : 'false');
-    $('t-editBtn').textContent = on ? '편집 끝내기' : '줄 편집';
+    $('t-editBtn').textContent = on ? '편집 완료' : '줄 편집';
     render();
   });
   $('t-clearBtn').addEventListener('click', function () {
@@ -1165,7 +1179,7 @@ function fileName(t, fb) { t = (t || '').replace(/[\\/:*?"<>|\n\r]+/g, ' ').repl
     }).then(function () {
       board.classList.remove('t-exporting');
       btn.disabled = false;
-      btn.textContent = '이미지로 저장';
+      btn.textContent = '이미지 저장';
     });
   });
   $('t-closeShot').addEventListener('click', function () { $('t-overlay').hidden = true; });
